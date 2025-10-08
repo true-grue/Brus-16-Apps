@@ -4,7 +4,10 @@ from brus16_asm import assemble, save
 from brus16_cfg import *
 
 
-def to_rgb565(r, g, b):
+def to_rgb565(val):
+    r = (val >> 16) & 0xff
+    g = (val >> 8) & 0xff
+    b = val & 0xff
     r5 = (r >> 3) & 0x1f
     g6 = (g >> 2) & 0x3f
     b5 = (b >> 3) & 0x1f
@@ -15,15 +18,15 @@ def get_rect_addr(rect, offs=0):
     return RECT_MEM + rect * RECT_SIZE + offs
 
 
-GRASS_DATA = [1, 0, 0, SCREEN_W, SCREEN_H, to_rgb565(0x3a, 0x66, 0x1c)]
+GRASS_DATA = [1, 0, 0, SCREEN_W, SCREEN_H, to_rgb565(0x3a661c)]
 
 ROAD0_W = 225
 ROAD1_W = 180
 ROAD2_W = 150
 
-ROAD0_DATA = [1, (SCREEN_W - ROAD0_W) // 2, 0, ROAD0_W, SCREEN_H, to_rgb565(0x33, 0x80, 0x00)]
-ROAD1_DATA = [1, (SCREEN_W - ROAD1_W) // 2, 0, ROAD1_W, SCREEN_H, to_rgb565(0x80, 0x80, 0x80)]
-ROAD2_DATA = [1, (SCREEN_W - ROAD2_W) // 2, 0, ROAD2_W, SCREEN_H, to_rgb565(0x99, 0x99, 0x99)]
+ROAD0_DATA = [1, (SCREEN_W - ROAD0_W) // 2, 0, ROAD0_W, SCREEN_H, to_rgb565(0x338000)]
+ROAD1_DATA = [1, (SCREEN_W - ROAD1_W) // 2, 0, ROAD1_W, SCREEN_H, to_rgb565(0x808080)]
+ROAD2_DATA = [1, (SCREEN_W - ROAD2_W) // 2, 0, ROAD2_W, SCREEN_H, to_rgb565(0x999999)]
 
 LINE_RECT = 4
 LINE_PARTS = 4
@@ -33,7 +36,7 @@ LINE_GAP = (SCREEN_H - LINE_PARTS * LINE_H) // (LINE_PARTS - 1)
 LINE_DATA = []
 for i in range(LINE_PARTS):
     LINE_DATA += [1, (SCREEN_W - LINE_W) // 2, i * (LINE_H + LINE_GAP),
-                  LINE_W, LINE_H, to_rgb565(0xe6, 0xe6, 0xe6)]
+                  LINE_W, LINE_H, to_rgb565(0xe6e6e6)]
 
 CROSSING_RECT = LINE_RECT + LINE_PARTS
 CROSSING_PARTS = 5
@@ -41,20 +44,20 @@ CROSSING_W = LINE_W * 2
 CROSSING_H = LINE_H
 CROSSING_GAP = CROSSING_W * 3
 CROSSING = [
-    1, 252, 218, CROSSING_W, CROSSING_H, to_rgb565(0xff, 0xcc, 0x00),
-    0, CROSSING_W + CROSSING_GAP, 0, CROSSING_W, CROSSING_H, to_rgb565(0xe6, 0xe6, 0xe6),
-    0, (CROSSING_W + CROSSING_GAP) * 2, 0, CROSSING_W, CROSSING_H, to_rgb565(0xff, 0xcc, 0x00),
-    0, (CROSSING_W + CROSSING_GAP) * 3, 0, CROSSING_W, CROSSING_H, to_rgb565(0xe6, 0xe6, 0xe6),
-    0, (CROSSING_W + CROSSING_GAP) * 4, 0, CROSSING_W, CROSSING_H, to_rgb565(0xff, 0xcc, 0x00),
+    1, 252, 218, CROSSING_W, CROSSING_H, to_rgb565(0xffcc00),
+    0, CROSSING_W + CROSSING_GAP, 0, CROSSING_W, CROSSING_H, to_rgb565(0xe6e6e6),
+    0, (CROSSING_W + CROSSING_GAP) * 2, 0, CROSSING_W, CROSSING_H, to_rgb565(0xffcc00),
+    0, (CROSSING_W + CROSSING_GAP) * 3, 0, CROSSING_W, CROSSING_H, to_rgb565(0xe6e6e6),
+    0, (CROSSING_W + CROSSING_GAP) * 4, 0, CROSSING_W, CROSSING_H, to_rgb565(0xffcc00),
 ]
 
 HOUSE0_RECT = CROSSING_RECT + CROSSING_PARTS
 HOUSE_H = 100
 HOUSE0_DATA = [
-    1, 60, 140, 80, HOUSE_H * 2, to_rgb565(0x55, 0x22, 0x00),
-    0, -3, -3, 80,HOUSE_H * 2, to_rgb565(0xaa, 0x44, 0x00),
-    0, 38 - 3, -3, 4, HOUSE_H * 2, to_rgb565(0xd4, 0x55, 0x00),
-    0, 42 - 3, -3, 38, HOUSE_H * 2, to_rgb565(0x80, 0x33, 0x00)
+    1, 60, 140, 80, HOUSE_H * 2, to_rgb565(0x552200),
+    0, -3, -3, 80, HOUSE_H * 2, to_rgb565(0xaa4400),
+    0, 35, -3, 4, HOUSE_H * 2, to_rgb565(0xd45500),
+    0, 39, -3, 38, HOUSE_H * 2, to_rgb565(0x803300)
 ]
 HOUSE_PARTS = len(HOUSE0_DATA) // 6
 HOUSE1_RECT = HOUSE0_RECT + HOUSE_PARTS
@@ -63,45 +66,48 @@ HOUSE1_DATA[1] = 500
 HOUSE_SIZES = [HOUSE_H, HOUSE_H * 2, HOUSE_H * 3, HOUSE_H * 4]
 
 CAR_RECT = HOUSE1_RECT + HOUSE_PARTS
+CAR_BBOX = [2, -8, 20, 56]
 CAR_DATA = [
-    1, (SCREEN_W - 24) // 2 + 40, 350, 24, 9, to_rgb565(0, 0, 0),
-    0, 0, 40 - 8, 24, 9, to_rgb565(0, 0, 0),
-    0, 2, 0 - 8, 20, 56, to_rgb565(0xff, 0x2a, 0x2a),
-    0, 2, 0 - 8, 20, 20, to_rgb565(0xff, 0x55, 0x55),
-    0, 2, 15 - 8, 20, 6, to_rgb565(0xff, 0xaa, 0xaa),
-    0, 2, 40 - 8, 20, 6, to_rgb565(0xff, 0xaa, 0xaa)
+    1, (SCREEN_W - 24) // 2 + 40, 350, 24, 9, to_rgb565(0),
+    0, 0, 32, 24, 9, to_rgb565(0),
+    0, 2, -8, 20, 56, to_rgb565(0xff2a2a),
+    0, 2, -8, 20, 20, to_rgb565(0xff5555),
+    0, 2, 7, 20, 6, to_rgb565(0xffaaaa),
+    0, 2, 32, 20, 6, to_rgb565(0xffaaaa)
 ]
 CAR_PARTS = len(CAR_DATA) // 6
 
 SMALL_CAR_RECT = CAR_RECT + CAR_PARTS
 SMALL_CAR_X = (SCREEN_W - 24) // 2 + 40
+SMALL_CAR_BBOX = [2, -8, 20, 54]
 SMALL_CAR_DATA = [
-    1, SMALL_CAR_X, 100, 24, 9, to_rgb565(0, 0, 0),
-    0, 0, 40 - 8, 24, 9, to_rgb565(0, 0, 0),
-    0, 2, 0 - 8, 20, 54, to_rgb565(0x00, 0x88, 0xaa),
-    0, 2, 40 - 8, 20, 14, to_rgb565(0x00, 0x66, 0x80),
-    0, 2, 15 - 8, 20, 30, to_rgb565(0x00, 0xaa, 0xd4),
-    0, 4, 14, 16, 18, to_rgb565(0x00, 0x66, 0x80)
+    1, SMALL_CAR_X, 100, 24, 9, to_rgb565(0),
+    0, 0, 32, 24, 9, to_rgb565(0),
+    0, 2, -8, 20, 54, to_rgb565(0x0088aa),
+    0, 2, 32, 20, 14, to_rgb565(0x006680),
+    0, 2, 7, 20, 30, to_rgb565(0x00aad4),
+    0, 4, 14, 16, 18, to_rgb565(0x006680)
 ]
 SMALL_CAR_PARTS = len(SMALL_CAR_DATA) // 6
-SMALL_CAR_SPEEDS = [5, 7, 10, 12]
-SMALL_CAR_XS = [SMALL_CAR_X, SMALL_CAR_X - 5, SMALL_CAR_X - 10, SMALL_CAR_X - 15]
+SMALL_CAR_X_POS = [SMALL_CAR_X, SMALL_CAR_X - 5, SMALL_CAR_X - 10, SMALL_CAR_X - 15]
+SMALL_CAR_SPEED = [-5, -5, -7, -10, -12]
 
 BIG_CAR_RECT = SMALL_CAR_RECT + SMALL_CAR_PARTS
 BIG_CAR_X = 260
+BIG_CAR_BBOX = [2, 0, 36, 172]
 BIG_CAR_DATA = [
-    1, BIG_CAR_X, -200, 40, 128, to_rgb565(0x00, 0x66, 0x80),
-    0, (40 - 20) // 2, 128, 20, 4, to_rgb565(0, 0, 0),
-    0, 0, 155, 40, 9, to_rgb565(0, 0, 0),
-    0, 2, 128 + 4, 40 - 4, 40, to_rgb565(0x00, 0x88, 0xaa),
-    0, 2, 128 + 14 + 2, 40 - 4, 20, to_rgb565(00, 0x66, 0x80),
-    0, 2, 128 + 14 + 15, 40 - 4, 10, to_rgb565(0x00, 0xaa, 0xd4),
-    0, 5, 128 + 14 + 15, 40 - 10, 6 - 2, to_rgb565(0x00, 0x66, 0x80),
-    0, 2, 128 + 14 + 16 + 8, 40 - 4, 6, to_rgb565(0x00, 0x88, 0xaa),
+    1, BIG_CAR_X, -200, 40, 128, to_rgb565(0x006680),
+    0, 10, 128, 20, 4, to_rgb565(0),
+    0, 0, 155, 40, 9, to_rgb565(0),
+    0, 2, 132, 36, 40, to_rgb565(0x0088aa),
+    0, 2, 144, 36, 20, to_rgb565(0x006680),
+    0, 2, 157, 36, 10, to_rgb565(0x00aad4),
+    0, 5, 157, 30, 4, to_rgb565(0x006680),
+    0, 2, 166, 36, 6, to_rgb565(0x0088aa),
 ]
 BIG_CAR_PARTS = len(BIG_CAR_DATA) // 6
-BIG_CAR_SPEEDS = [2, 2, 3, 4]
-BIG_CAR_XS = [BIG_CAR_X, BIG_CAR_X + 5, BIG_CAR_X + 10, BIG_CAR_X + 15]
+BIG_CAR_X_POS = [BIG_CAR_X, BIG_CAR_X + 5, BIG_CAR_X + 10, BIG_CAR_X + 15]
+BIG_CAR_SPEED = [2, 2, 2, 3, 4]
 
 BG_DATA = GRASS_DATA + ROAD0_DATA + ROAD1_DATA + ROAD2_DATA + \
     LINE_DATA + CROSSING + HOUSE0_DATA + HOUSE1_DATA + CAR_DATA + \
@@ -112,25 +118,25 @@ ACCEL = 10
 BRAKE = 20
 SLIDE = 30
 
-
 game = f'''
 def setup():
     set_fp({KEY_MEM})
-    bg()
+    background()
     while 1:
         update()
         wait()
 
 
-def bg():
+def background():
     copy(bg_data, {RECT_MEM}, {len(BG_DATA)})
 
 
 def update():
+    detect_collisions()
     control_my_car()
     slide_my_car()
-    move_bg()
-    move_other_cars()
+    move_background()
+    move_npc_cars()
 
 
 def control_my_car():
@@ -158,26 +164,82 @@ def slide_my_car():
     poke({get_rect_addr(CAR_RECT, 1)}, car_x + shra(speed_x + 4, 3))
 
 
-def move_other_cars():
-    car = {get_rect_addr(SMALL_CAR_RECT)}
-    if (car[2] >= {SCREEN_H + 500}) | (car[2] <= -500):
-        if ltu(rnd(), 1000):
-            car[1] = small_car_xs[rnd() & 3]
-            car[2] = -80
-            small_car_speed = small_car_speeds[rnd() & 3]
-    else:
-        car[2] += -small_car_speed + (speed_y >> 7)
-    car = {get_rect_addr(BIG_CAR_RECT)}
-    if (car[2] >= {SCREEN_H}) | (car[2] <= -500):
-        if ltu(rnd(), 500):
-            car[1] = big_car_xs[rnd() & 3]
-            car[2] = -200
-            big_car_speed = big_car_speeds[rnd() & 3]
-    else:
-        car[2] += big_car_speed + (speed_y >> 7)
+def move_npc_cars():
+    move_npc_car(
+        {get_rect_addr(SMALL_CAR_RECT)},
+        -500,
+        {SCREEN_H + 500},
+        -80,
+        small_car_x_pos,
+        small_car_speed,
+        1000)
+    move_npc_car(
+        {get_rect_addr(BIG_CAR_RECT)},
+        -500,
+        {SCREEN_H},
+        -200,
+        big_car_x_pos,
+        big_car_speed,
+        500)
 
 
-def move_bg():
+def move_npc_car(car, y_min, y_max, y_start, x_pos, speed, prob):
+    if (car[2] >= y_max) | (car[2] <= y_min):
+        if ltu(rnd(), prob):
+            car[1] = x_pos[rnd() & 3]
+            car[2] = y_start
+            speed[0] = speed[1 + (rnd() & 3)]
+    else:
+        car[2] += speed[0] + (speed_y >> 7)
+
+
+def detect_collisions():
+    car = {get_rect_addr(CAR_RECT)}
+    car_x1 = car[1] + {CAR_BBOX[0]}
+    car_y1 = car[2] + {CAR_BBOX[1]}
+    car_x2 = car_x1 + {CAR_BBOX[2]}
+    car_y2 = car_y1 + {CAR_BBOX[3]}
+    if (car_x1 < {ROAD1_DATA[1]}) | (car_x2 > {ROAD1_DATA[1] + ROAD1_W}):
+        game_over()
+    small_car = {get_rect_addr(SMALL_CAR_RECT)}
+    small_car_x1 = small_car[1] + {SMALL_CAR_BBOX[0]}
+    small_car_y1 = small_car[2] + {SMALL_CAR_BBOX[1]}
+    small_car_x2 = small_car_x1 + {SMALL_CAR_BBOX[2]}
+    small_car_y2 = small_car_y1 + {SMALL_CAR_BBOX[3]}
+    if collide(car_x1, car_y1, car_x2, car_y2,
+               small_car_x1, small_car_y1, small_car_x2, small_car_y2):
+        game_over()
+    big_car = {get_rect_addr(BIG_CAR_RECT)}
+    big_car_x1 = big_car[1] + {BIG_CAR_BBOX[0]}
+    big_car_y1 = big_car[2] + {BIG_CAR_BBOX[1]}
+    big_car_x2 = big_car_x1 + {BIG_CAR_BBOX[2]}
+    big_car_y2 = big_car_y1 + {BIG_CAR_BBOX[3]}
+    if collide(car_x1, car_y1, car_x2, car_y2,
+               big_car_x1, big_car_y1, big_car_x2, big_car_y2):
+        game_over()
+
+
+def game_over():
+    car = {get_rect_addr(CAR_RECT)}
+    x = car[2]
+    j = 0
+    while j < 5:
+        i = 0
+        car[2] = x
+        while i < 15:
+            wait()
+            i += 1
+        i = 0
+        car[2] = -1000
+        while i < 30:
+            wait()
+            i += 1
+        j += 1
+    while 1:
+        wait()
+
+
+def move_background():
     bg_speed = speed_y >> 7
     move_lines(bg_speed)
     move_crossing(bg_speed)
@@ -226,6 +288,18 @@ def move_line(rect_y):
     line_y += {LINE_H + LINE_GAP}
 
 
+def collide(x1, y1, x2, y2, other_x1, other_y1, other_x2, other_y2):
+    if x2 < other_x1:
+        return 0
+    if x1 > other_x2:
+        return 0
+    if y2 < other_y1:
+        return 0
+    if y1 > other_y2:
+        return 0
+    return 1
+
+
 def max(a, b):
     if a > b:
         return a
@@ -255,16 +329,14 @@ def rnd():
 
 bg_data = {BG_DATA}
 house_sizes = {HOUSE_SIZES}
-small_car_xs = {SMALL_CAR_XS}
-small_car_speeds = {SMALL_CAR_SPEEDS}
-big_car_xs = {BIG_CAR_XS}
-big_car_speeds = {BIG_CAR_SPEEDS}
 rnd_seed = 1
 line_y = 0
 speed_x = 0
 speed_y = 0
-small_car_speed = 5
-big_car_speed = 2
+small_car_x_pos = {SMALL_CAR_X_POS}
+small_car_speed = {SMALL_CAR_SPEED}
+big_car_x_pos = {BIG_CAR_X_POS}
+big_car_speed = {BIG_CAR_SPEED}
 '''
 
 asm = comp(game)
