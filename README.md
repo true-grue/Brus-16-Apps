@@ -8,4 +8,4 @@ Original architecture:
 - Rectangle-based GPU without a frame buffer.
 
 
-See in [action](https://true-grue.github.io/Brus-16-Demo/brus16.html).
+See in [action](https://true-grue.github.io/Brus-16-Demo/brus16.html#1).
