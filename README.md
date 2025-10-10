@@ -1,11 +1,5 @@
 # Brus-16 Demo
 
-A tiny game console for education.
+A tiny game [console](https://github.com/true-grue/Brus-16) for education.
 
-Original architecture:
-
-- Simple 16-bit stack-based GPU.
-- Rectangle-based GPU without a frame buffer.
-
-
-See in [action](https://true-grue.github.io/Brus-16-Demo/brus16.html#1).
+See in [action](https://true-grue.github.io/Brus-16-Demo/brus16.html) (use cursor keys).
