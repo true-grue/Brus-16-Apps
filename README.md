@@ -8,7 +8,10 @@ Some apps for a tiny game [console](https://github.com/true-grue/Brus-16).
 
 | App  | Author |
 | ---- | ------ |
-| Racing  | Peter Sovietov |
-| Flippy Rect  | Vladimir Miklashevich |
-| Zoom  | Peter Sovietov |
 | Logo  | Vladimir Miklashevich |
+| Racing | Peter Sovietov |
+| Flippy | Vladimir Miklashevich |
+| Ping | Peter Sovietov |
+| Tower | Artyom Gorchakov |
+| Alter Ego | Vasily Litvinenko (original authors: Denis Grachev, Shiru) |
+| Zoom | Peter Sovietov |
