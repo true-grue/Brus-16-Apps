@@ -2,7 +2,7 @@
 
 Some apps for a tiny game [console](https://github.com/true-grue/Brus-16).
 
-[Online emulator](https://true-grue.github.io/Brus-16-Apps/brus16.html) (use keyboard).
+[Online emulator](https://true-grue.github.io/Brus-16-Apps/brus16.html).
 
 ## Authors
 
