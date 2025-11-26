@@ -4,18 +4,6 @@ Some apps for a tiny game [console](https://github.com/true-grue/Brus-16).
 
 [Online emulator](https://true-grue.github.io/Brus-16-Apps/brus16.html) (use keyboard).
 
-## Keys
-
-**Player 1**
-
-* LEFT/RIGHT/UP/DOWN: cursor keys.
-* A/B/C/D: K/L/I/O.
-
-**Player 2**
-
-* LEFT/RIGHT/UP/DOWN: A/D/W/S.
-* A/B/C/D: F/G/R/T.
-
 ## Authors
 
 | App  | Author |
