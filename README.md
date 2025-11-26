@@ -13,7 +13,7 @@ Some apps for a tiny game [console](https://github.com/true-grue/Brus-16).
 
 **Player 2**
 
-* LEFT/RIGHT/UP/DOWN: W/A/S/D.
+* LEFT/RIGHT/UP/DOWN: A/D/W/S.
 * A/B/C/D: F/G/R/T.
 
 ## Authors
