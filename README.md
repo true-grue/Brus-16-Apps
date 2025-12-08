@@ -15,3 +15,5 @@ Some apps for a tiny game [console](https://github.com/true-grue/Brus-16).
 | Tower | Artyom Gorchakov |
 | Alter Ego | Vasily Litvinenko (original authors: Denis Grachev, Shiru) |
 | Zoom | Peter Sovietov |
+| Robot | pixelrat |
+| Gerion | hugeping |
