@@ -17,3 +17,5 @@ Some apps for a tiny game [console](https://github.com/true-grue/Brus-16).
 | Zoom | Peter Sovietov |
 | Robot | pixelrat |
 | Gerion | hugeping |
+| Donkey | HeartOfTFreljord |
+
